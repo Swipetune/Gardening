@@ -1,0 +1,71 @@
+#   
+<!DOCTYPE html>  
+<html lang="nl">  
+<head>  
+  <meta charset="utf-8" />  
+  <meta name="viewport" content="width=device-width, initial-scale=1" />  
+  <title>Jaarplanning Tuinaanleg & Onderhoud — Interactieve Tijdlijn</title>  
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>  
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>  
+  <link rel="stylesheet" href="style.css" />  
+</head>  
+<body>  
+  <header>  
+    <div class="title">  
+      <h1>Jaarplanning Tuinaanleg & Onderhoud</h1>  
+      <div class="subtitle">Vlaams klimaat — interactief seizoensschema (gazon, snoei, bemesting, frezen)</div>  
+    </div>  
+    <div class="toolbar">  
+      <div class="group" role="group" aria-label="Seizoenen">  
+        <label class="chk" data-szn="winter"><input type="checkbox" id="szn-winter" checked> Winter</label>  
+        <label class="chk" data-szn="spring"><input type="checkbox" id="szn-spring" checked> Lente</label>  
+        <label class="chk" data-szn="summer"><input type="checkbox" id="szn-summer" checked> Zomer</label>  
+        <label class="chk" data-szn="autumn"><input type="checkbox" id="szn-autumn" checked> Herfst</label>  
+      </div>  
+      <div class="group" role="group" aria-label="Detailniveau">  
+        <button id="btnBeginner" class="ghost" title="Compacte basis taken">Beginner</button>  
+        <button id="btnPro" title="Uitgebreide taken en mijlpalen">Pro</button>  
+      </div>  
+      <div class="group" role="group" aria-label="Exporteren">  
+        <button id="btnPNG" class="ghost">Exporteer als PNG</button>  
+      </div>  
+    </div>  
+  </header>  
+  
+  <main>  
+    <section class="kpi">  
+      <div class="card">  
+        <h3>Seizoenen zichtbaar</h3>  
+        <div class="small"><span id="kpiSeasons">4/4</span></div>  
+      </div>  
+      <div class="card">  
+        <h3>Taakset</h3>  
+        <div class="small"><span id="kpiMode">Pro</span></div>  
+      </div>  
+      <div class="card">  
+        <h3>Tip</h3>  
+        <div class="small tip">Zaaien vanaf bodem ≥10&nbsp;°C (meestal april–mei). Eerste haagsnoei na 15 mei.</div>  
+      </div>  
+    </section>  
+  
+    <section class="canvas">  
+      <div class="legend" aria-hidden="true" style="margin-bottom:10px;">  
+        <span><i class="dot" style="background:var(--winter)"></i>Winter</span>  
+        <span><i class="dot" style="background:var(--spring)"></i>Lente</span>  
+        <span><i class="dot" style="background:var(--summer)"></i>Zomer</span>  
+        <span><i class="dot" style="background:var(--autumn)"></i>Herfst</span>  
+      </div>  
+      <div id="chart" class="mermaid">Laden…</div>  
+    </section>  
+  </main>  
+  
+  <footer>  
+    <div>Professioneel schema — aanpasbaar, printvriendelijk en mobiel bruikbaar.</div>  
+  </footer>  
+  
+  <!-- Mermaid (CDN) -->  
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>  
+  <!-- App logic -->  
+  <script src="app.js"></script>  
+</body>  
+</html>  
