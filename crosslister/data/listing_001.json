@@ -1,0 +1,30 @@
+{
+  "title": "Voorbeeldproduct", 
+  "description": "Voorbeeldbeschrijving van minimaal tien tekens lang.",
+  "price": 75.0,
+  "currency": "EUR",
+  "condition": "nieuw_zonder_kaartje",
+  "category_hint": "audio_accessoires",
+  "brand": "Voorbeeldmerk",
+  "size": "One size",
+  "color": ["zwart", "wit"],
+  "gender": "unisex",
+  "material": "kunststof",
+  "sku": "SKU-123",
+  "quantity": 1,
+  "location": {
+    "country": "NL",
+    "postcode": "1011AB",
+    "city": "Amsterdam",
+    "region": "North Holland"
+  },
+  "shipping": {
+    "pickup": true,
+    "carriers": ["PostNL", "DPD"],
+    "buyer_pays_shipping": true
+  },
+  "images": [
+    "images/product/foto1.jpg",
+    "images/product/foto2.jpg"
+  ]
+}
