@@ -1,0 +1,413 @@
+{
+  "name": "Crosslist - Vinted",
+  "note": "Vinted listing automation",
+  "errorCatch": "skip",
+  "tagEndDeal": "keep",
+  "browserEndDeal": "keep",
+  "clearCacheAfterClose": false,
+  "taskTimeout": 0,
+  "taskDelay": 0,
+  "meta": {
+    "name": "Crosslist - Vinted",
+    "version": 1
+  },
+  "variables": {
+    "images_root": "/absolute/path/to/images",
+    "username": "{{env.VINTED_USER}}",
+    "password": "{{env.VINTED_PASS}}",
+    "login_url": "https://www.vinted.be/member/login",
+    "new_item_url": "https://www.vinted.be/items/new",
+    "sel_login_email": "input[name='login']",
+    "sel_login_pass": "input[name='password']",
+    "sel_login_submit": "button[type='submit']",
+    "sel_login_ok_indicator": "[data-testid='header-user-menu']",
+    "sel_cookie_accept": "button[data-testid='cookie-accept-all']",
+    "sel_file_input": "input[type='file']",
+    "sel_photo_thumb": "[data-testid='photo-thumb']",
+    "sel_title": "input[name='title']",
+    "sel_description": "textarea[name='description']",
+    "sel_category_open": "[data-testid='category-select']",
+    "sel_category_search": "input[placeholder='Zoek categorie']",
+    "sel_category_pick_first": "[role='option']:first-child",
+    "sel_brand_input": "input[placeholder='Merk']",
+    "sel_brand_first": "[data-testid='brand-option']:first-child",
+    "sel_size_input": "input[placeholder='Maat']",
+    "sel_size_first": "[role='option']:first-child",
+    "sel_condition_select": "select[name='status']",
+    "sel_price": "input[name='price']",
+    "sel_shipping_toggle": "[data-testid='shipping-pickup']",
+    "sel_publish_btn": "button[data-testid='publish']",
+    "sel_publish_success_banner": "[data-testid='item-published']",
+    "sel_publish_error": "[data-testid='error-banner']",
+    "publish_api_hint": "/items"
+  },
+  "tableData": {
+    "enabled": true,
+    "source": "csv",
+    "path": "/absolute/path/to/ads.csv",
+    "hasHeader": true
+  },
+  "nodes": [
+    {
+      "type": "setVar",
+      "var": "img_list",
+      "valueFrom": {
+        "split": {
+          "source": "{{images}}",
+          "sep": ";"
+        }
+      }
+    },
+    {
+      "type": "setVar",
+      "var": "img_list",
+      "valueFrom": {
+        "slice": {
+          "source": "{{img_list}}",
+          "start": 0,
+          "end": 20
+        }
+      }
+    },
+    {
+      "type": "setVar",
+      "var": "img_main",
+      "valueFrom": {
+        "index": {
+          "source": "{{img_list}}",
+          "at": 0
+        }
+      }
+    },
+    {
+      "type": "setVar",
+      "var": "cond_vinted",
+      "valueFrom": {
+        "map": {
+          "source": "{{condition_generic}}",
+          "table": {
+            "nieuw_met_kaartje": "new_with_tags",
+            "nieuw_zonder_kaartje": "new_without_tags",
+            "zeer_goed": "very_good",
+            "goed": "good",
+            "redelijk": "satisfactory"
+          }
+        }
+      }
+    },
+    {
+      "type": "ifCondition",
+      "cond": "{{cond_vinted}} == '' || {{cond_vinted}} == null",
+      "then": [
+        {
+          "type": "fail",
+          "message": "Vinted: onbekende conditie voor mapping."
+        }
+      ]
+    },
+    {
+      "type": "ifCondition",
+      "cond": "{{brand}} == '' || {{brand}} == null",
+      "then": [
+        {
+          "type": "fail",
+          "message": "Vinted: merk is verplicht."
+        }
+      ]
+    },
+    {
+      "type": "ifCondition",
+      "cond": "{{size}} == '' || {{size}} == null",
+      "then": [
+        {
+          "type": "fail",
+          "message": "Vinted: maat is verplicht."
+        }
+      ]
+    },
+    {
+      "type": "navigate",
+      "url": "{{login_url}}"
+    },
+    {
+      "type": "waitForSelector",
+      "selector": "{{sel_login_email}}",
+      "timeout": 20000
+    },
+    {
+      "type": "elementExist",
+      "selector": "{{sel_cookie_accept}}",
+      "var": "cookie_visible"
+    },
+    {
+      "type": "ifCondition",
+      "cond": "{{cookie_visible}} == true",
+      "then": [
+        {
+          "type": "clickElement",
+          "selector": "{{sel_cookie_accept}}"
+        },
+        {
+          "type": "wait",
+          "min": 500,
+          "max": 900
+        }
+      ]
+    },
+    {
+      "type": "inputText",
+      "selector": "{{sel_login_email}}",
+      "value": "{{username}}",
+      "human": true
+    },
+    {
+      "type": "inputText",
+      "selector": "{{sel_login_pass}}",
+      "value": "{{password}}",
+      "mask": true,
+      "human": true
+    },
+    {
+      "type": "clickElement",
+      "selector": "{{sel_login_submit}}"
+    },
+    {
+      "type": "wait",
+      "min": 1500,
+      "max": 2500
+    },
+    {
+      "type": "elementExist",
+      "selector": "{{sel_login_ok_indicator}}",
+      "var": "logged_in"
+    },
+    {
+      "type": "ifCondition",
+      "cond": "{{logged_in}} != true",
+      "then": [
+        {
+          "type": "screenshot",
+          "file": "vinted_login_failed.png"
+        },
+        {
+          "type": "fail",
+          "message": "Vinted: login mislukt."
+        }
+      ]
+    },
+    {
+      "type": "navigate",
+      "url": "{{new_item_url}}"
+    },
+    {
+      "type": "waitForSelector",
+      "selector": "{{sel_file_input}}",
+      "timeout": 20000
+    },
+    {
+      "type": "elementExist",
+      "selector": "{{sel_cookie_accept}}",
+      "var": "cookie_visible_form"
+    },
+    {
+      "type": "ifCondition",
+      "cond": "{{cookie_visible_form}} == true",
+      "then": [
+        {
+          "type": "clickElement",
+          "selector": "{{sel_cookie_accept}}"
+        },
+        {
+          "type": "wait",
+          "min": 500,
+          "max": 900
+        }
+      ]
+    },
+    {
+      "type": "forEach",
+      "list": "{{img_list}}",
+      "itemVar": "img",
+      "steps": [
+        {
+          "type": "waitForSelector",
+          "selector": "{{sel_file_input}}",
+          "timeout": 20000
+        },
+        {
+          "type": "setFiles",
+          "selector": "{{sel_file_input}}",
+          "files": [
+            "{{images_root}}/{{img}}"
+          ]
+        },
+        {
+          "type": "waitForSelector",
+          "selector": "{{sel_photo_thumb}}",
+          "timeout": 30000
+        },
+        {
+          "type": "wait",
+          "min": 800,
+          "max": 1400
+        }
+      ]
+    },
+    {
+      "type": "inputText",
+      "selector": "{{sel_title}}",
+      "value": "{{title}}",
+      "human": true
+    },
+    {
+      "type": "inputText",
+      "selector": "{{sel_description}}",
+      "value": "{{description}}",
+      "human": true
+    },
+    {
+      "type": "clickElement",
+      "selector": "{{sel_category_open}}"
+    },
+    {
+      "type": "inputText",
+      "selector": "{{sel_category_search}}",
+      "value": "{{category_hint}}",
+      "human": true
+    },
+    {
+      "type": "wait",
+      "min": 700,
+      "max": 1100
+    },
+    {
+      "type": "clickElement",
+      "selector": "{{sel_category_pick_first}}"
+    },
+    {
+      "type": "inputText",
+      "selector": "{{sel_brand_input}}",
+      "value": "{{brand}}",
+      "human": true
+    },
+    {
+      "type": "wait",
+      "min": 600,
+      "max": 900
+    },
+    {
+      "type": "elementExist",
+      "selector": "{{sel_brand_first}}",
+      "var": "brand_found"
+    },
+    {
+      "type": "ifCondition",
+      "cond": "{{brand_found}} != true",
+      "then": [
+        {
+          "type": "fail",
+          "message": "Vinted: onbekend merk, controleer invoer."
+        }
+      ]
+    },
+    {
+      "type": "clickElement",
+      "selector": "{{sel_brand_first}}"
+    },
+    {
+      "type": "inputText",
+      "selector": "{{sel_size_input}}",
+      "value": "{{size}}",
+      "human": true
+    },
+    {
+      "type": "wait",
+      "min": 600,
+      "max": 900
+    },
+    {
+      "type": "elementExist",
+      "selector": "{{sel_size_first}}",
+      "var": "size_found"
+    },
+    {
+      "type": "ifCondition",
+      "cond": "{{size_found}} != true",
+      "then": [
+        {
+          "type": "fail",
+          "message": "Vinted: maat niet gevonden."
+        }
+      ]
+    },
+    {
+      "type": "clickElement",
+      "selector": "{{sel_size_first}}"
+    },
+    {
+      "type": "selectOption",
+      "selector": "{{sel_condition_select}}",
+      "value": "{{cond_vinted}}"
+    },
+    {
+      "type": "inputText",
+      "selector": "{{sel_price}}",
+      "value": "{{price}}",
+      "human": true
+    },
+    {
+      "type": "ifCondition",
+      "cond": "{{shipping_pickup}} == true",
+      "then": [
+        {
+          "type": "clickElement",
+          "selector": "{{sel_shipping_toggle}}"
+        },
+        {
+          "type": "wait",
+          "min": 500,
+          "max": 900
+        }
+      ]
+    },
+    {
+      "type": "clickElement",
+      "selector": "{{sel_publish_btn}}"
+    },
+    {
+      "type": "waitRequest",
+      "urlContains": "{{publish_api_hint}}",
+      "timeout": 30000
+    },
+    {
+      "type": "elementExist",
+      "selector": "{{sel_publish_success_banner}}",
+      "var": "pub_ok"
+    },
+    {
+      "type": "ifCondition",
+      "cond": "{{pub_ok}} != true",
+      "then": [
+        {
+          "type": "elementExist",
+          "selector": "{{sel_publish_error}}",
+          "var": "pub_error"
+        },
+        {
+          "type": "screenshot",
+          "file": "vinted_publish_fail.png"
+        },
+        {
+          "type": "fail",
+          "message": "Vinted: publicatie niet bevestigd."
+        }
+      ],
+      "else": [
+        {
+          "type": "screenshot",
+          "file": "vinted_published_ok.png"
+        }
+      ]
+    }
+  ]
+}
