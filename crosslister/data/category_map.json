@@ -1,0 +1,135 @@
+{
+  "audio_accessoires": {
+    "keywords": ["audio", "microfoon", "isolatieschild"],
+    "marktplaats": "Audio, Tv en Foto > Audio > Microfoons en Accessoires",
+    "tweedehands": "Multimedia > Audio",
+    "facebook": "Musical instruments",
+    "vinted": "Elektronica > Audio"
+  },
+  "bouwmaterialen": {
+    "keywords": ["bouw", "afdichting", "mortel"],
+    "marktplaats": "Doe-het-zelf en Verbouw > Bouwmaterialen",
+    "tweedehands": "Doe-het-zelf & Tuin > Bouw",
+    "facebook": "Home improvement supplies",
+    "vinted": "Home > Gereedschap"
+  },
+  "opbergboxen": {
+    "keywords": ["opbergen", "boxen", "stapelbaar"],
+    "marktplaats": "Huis en Inrichting > Opbergers en Rekken",
+    "tweedehands": "Huis en Tuin > Opslag & Rekken",
+    "facebook": "Home goods",
+    "vinted": "Home > Opslag"
+  },
+  "fietsrek": {
+    "keywords": ["fietsrek", "fietsenrek", "bicycle rack"],
+    "marktplaats": "Fietsen en Brommers > Fietsaccessoires",
+    "tweedehands": "Fietsen > Accessoires",
+    "facebook": "Bicycles",
+    "vinted": "Sport > Fietsaccessoires"
+  },
+  "zwembad_accessoires": {
+    "keywords": ["zwembad", "pool", "folie"],
+    "marktplaats": "Tuin en Terras > Zwembaden en Spa's",
+    "tweedehands": "Doe-het-zelf & Tuin > Zwembaden & Spa's",
+    "facebook": "Outdoor & garden",
+    "vinted": "Home > Tuin"
+  },
+  "autostoel": {
+    "keywords": ["autostoel", "kinderstoel"],
+    "marktplaats": "Kinderen en Baby's > Autostoeltjes",
+    "tweedehands": "Baby & Kind > Autostoelen",
+    "facebook": "Baby & kids gear",
+    "vinted": "Kinderen > Autostoelen"
+  },
+  "fietsbanden": {
+    "keywords": ["fietsband", "binnenband"],
+    "marktplaats": "Fietsen en Brommers > Onderdelen en Accessoires",
+    "tweedehands": "Fietsen > Onderdelen",
+    "facebook": "Bicycle parts",
+    "vinted": "Sport > Fietsaccessoires"
+  },
+  "barkrukken": {
+    "keywords": ["barkruk", "krukken"],
+    "marktplaats": "Huis en Inrichting > Stoelen en Banken",
+    "tweedehands": "Huis en Tuin > Meubels > Stoelen",
+    "facebook": "Furniture",
+    "vinted": "Home > Meubels"
+  },
+  "industrie_slang": {
+    "keywords": ["hydraulisch", "slang"],
+    "marktplaats": "Doe-het-zelf en Verbouw > Gereedschap",
+    "tweedehands": "Doe-het-zelf & Tuin > Gereedschap",
+    "facebook": "Business equipment",
+    "vinted": "Home > Gereedschap"
+  },
+  "promotiewiel": {
+    "keywords": ["promotie", "rad van fortuin"],
+    "marktplaats": "Zakelijke Goederen > Winkelinrichting en Inventaris",
+    "tweedehands": "Zakelijk & KMO > Winkelinrichting",
+    "facebook": "Business equipment",
+    "vinted": "Home > Overig"
+  },
+  "loopband": {
+    "keywords": ["loopband", "treadmill"],
+    "marktplaats": "Sport en Fitness > Fitnessapparatuur > Loopbanden",
+    "tweedehands": "Sport > Fitness & Conditie",
+    "facebook": "Sports & outdoors",
+    "vinted": "Sport > Fitnessapparatuur"
+  },
+  "partytent_dakdoek": {
+    "keywords": ["paviljoen", "dakdoek", "partytent"],
+    "marktplaats": "Tuin en Terras > Partytenten en Parasols",
+    "tweedehands": "Doe-het-zelf & Tuin > Tuinmeubelen",
+    "facebook": "Outdoor & garden",
+    "vinted": "Home > Tuin"
+  },
+  "mini_trainer": {
+    "keywords": ["heimtrainer", "pedal"],
+    "marktplaats": "Sport en Fitness > Fitnessapparatuur",
+    "tweedehands": "Sport > Fitness & Conditie",
+    "facebook": "Sports & outdoors",
+    "vinted": "Sport > Fitnessapparatuur"
+  },
+  "metaal_kantbank": {
+    "keywords": ["kantbank", "metaal"],
+    "marktplaats": "Zakelijke Goederen > Machines en Apparatuur",
+    "tweedehands": "Zakelijk & KMO > Machines",
+    "facebook": "Business equipment",
+    "vinted": "Home > Gereedschap"
+  },
+  "warmtedeken": {
+    "keywords": ["warmtedeken", "elektrische deken"],
+    "marktplaats": "Huis en Inrichting > Slaapkamer > Dekens en Spreien",
+    "tweedehands": "Huis en Tuin > Slaapkamer",
+    "facebook": "Home goods",
+    "vinted": "Home > Textiel"
+  },
+  "partytent_frame": {
+    "keywords": ["partytent", "frame", "vidaXL"],
+    "marktplaats": "Tuin en Terras > Partytenten en Parasols",
+    "tweedehands": "Doe-het-zelf & Tuin > Tuinmeubelen",
+    "facebook": "Outdoor & garden",
+    "vinted": "Home > Tuin"
+  },
+  "wc_shelf": {
+    "keywords": ["wc", "etagere"],
+    "marktplaats": "Huis en Inrichting > Badkamer > Badkamermeubels",
+    "tweedehands": "Huis en Tuin > Badkamer",
+    "facebook": "Home goods",
+    "vinted": "Home > Meubels"
+  },
+  "eetkamerstoelen": {
+    "keywords": ["eetkamerstoel", "demeyere"],
+    "marktplaats": "Huis en Inrichting > Stoelen en Banken",
+    "tweedehands": "Huis en Tuin > Meubels > Stoelen",
+    "facebook": "Furniture",
+    "vinted": "Home > Meubels"
+  },
+  "compact_bureau": {
+    "keywords": ["bureau", "tafel"],
+    "marktplaats": "Huis en Inrichting > Tafels",
+    "tweedehands": "Huis en Tuin > Meubels > Tafels",
+    "facebook": "Furniture",
+    "vinted": "Home > Meubels"
+  }
+}
