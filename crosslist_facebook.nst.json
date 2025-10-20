@@ -1,0 +1,404 @@
+{
+  "name": "Crosslist - Facebook Marketplace",
+  "note": "Facebook Marketplace listing automation",
+  "errorCatch": "skip",
+  "tagEndDeal": "keep",
+  "browserEndDeal": "keep",
+  "clearCacheAfterClose": false,
+  "taskTimeout": 0,
+  "taskDelay": 0,
+  "meta": {
+    "name": "Crosslist - Facebook Marketplace",
+    "version": 1
+  },
+  "variables": {
+    "images_root": "/absolute/path/to/images",
+    "username": "{{env.FB_USER}}",
+    "password": "{{env.FB_PASS}}",
+    "login_url": "https://www.facebook.com/login",
+    "create_url": "https://www.facebook.com/marketplace/create/item",
+    "sel_login_email": "input#email",
+    "sel_login_pass": "input#pass",
+    "sel_login_submit": "button[name='login']",
+    "sel_login_ok_indicator": "[aria-label='Marketplace']",
+    "sel_file_input": "input[type='file']",
+    "sel_photo_thumb": "img[alt='photo preview']",
+    "sel_title": "input[aria-label='Title']",
+    "sel_price": "input[aria-label='Price']",
+    "sel_category": "div[aria-label='Category']",
+    "sel_category_option_first": "[role='option']:first-child",
+    "sel_condition": "div[aria-label='Condition']",
+    "sel_condition_option": "[role='option'][data-value='{{cond_facebook}}']",
+    "sel_description": "textarea[aria-label='Description']",
+    "sel_location": "input[aria-label='Location']",
+    "sel_next": "div[role='button'][aria-label='Next']",
+    "sel_groups_modal": "[data-pagelet='GroupsList']",
+    "sel_groups_uncheck_all": "[data-testid='uncheck-all']",
+    "sel_publish_btn": "div[role='button'][aria-label='Publish']",
+    "sel_publish_success_banner": "[data-testid='toast']",
+    "sel_cookie_accept": "button[data-testid='cookie-policy-manage-dialog-accept-button']",
+    "publish_api_hint": "/marketplace/create"
+  },
+  "tableData": {
+    "enabled": true,
+    "source": "csv",
+    "path": "/absolute/path/to/ads.csv",
+    "hasHeader": true
+  },
+  "nodes": [
+    {
+      "type": "setVar",
+      "var": "img_list",
+      "valueFrom": {
+        "split": {
+          "source": "{{images}}",
+          "sep": ";"
+        }
+      }
+    },
+    {
+      "type": "setVar",
+      "var": "img_list",
+      "valueFrom": {
+        "slice": {
+          "source": "{{img_list}}",
+          "start": 0,
+          "end": 10
+        }
+      }
+    },
+    {
+      "type": "setVar",
+      "var": "img_main",
+      "valueFrom": {
+        "index": {
+          "source": "{{img_list}}",
+          "at": 0
+        }
+      }
+    },
+    {
+      "type": "setVar",
+      "var": "cond_facebook",
+      "valueFrom": {
+        "map": {
+          "source": "{{condition_generic}}",
+          "table": {
+            "nieuw_met_kaartje": "NEW",
+            "nieuw_zonder_kaartje": "NEW_OTHER",
+            "zeer_goed": "USED_LIKE_NEW",
+            "goed": "USED_GOOD",
+            "redelijk": "USED_FAIR"
+          }
+        }
+      }
+    },
+    {
+      "type": "ifCondition",
+      "cond": "{{cond_facebook}} == '' || {{cond_facebook}} == null",
+      "then": [
+        {
+          "type": "fail",
+          "message": "Facebook: conditie kon niet gemapt worden."
+        }
+      ]
+    },
+    {
+      "type": "navigate",
+      "url": "{{login_url}}"
+    },
+    {
+      "type": "waitForSelector",
+      "selector": "{{sel_login_email}}",
+      "timeout": 20000
+    },
+    {
+      "type": "elementExist",
+      "selector": "{{sel_cookie_accept}}",
+      "var": "cookie_visible"
+    },
+    {
+      "type": "ifCondition",
+      "cond": "{{cookie_visible}} == true",
+      "then": [
+        {
+          "type": "clickElement",
+          "selector": "{{sel_cookie_accept}}"
+        },
+        {
+          "type": "wait",
+          "min": 500,
+          "max": 900
+        }
+      ]
+    },
+    {
+      "type": "inputText",
+      "selector": "{{sel_login_email}}",
+      "value": "{{username}}",
+      "human": true
+    },
+    {
+      "type": "wait",
+      "min": 2000,
+      "max": 5000
+    },
+    {
+      "type": "inputText",
+      "selector": "{{sel_login_pass}}",
+      "value": "{{password}}",
+      "mask": true,
+      "human": true
+    },
+    {
+      "type": "wait",
+      "min": 2000,
+      "max": 5000
+    },
+    {
+      "type": "clickElement",
+      "selector": "{{sel_login_submit}}"
+    },
+    {
+      "type": "wait",
+      "min": 2000,
+      "max": 5000
+    },
+    {
+      "type": "elementExist",
+      "selector": "{{sel_login_ok_indicator}}",
+      "var": "logged_in"
+    },
+    {
+      "type": "ifCondition",
+      "cond": "{{logged_in}} != true",
+      "then": [
+        {
+          "type": "screenshot",
+          "file": "fb_login_failed.png"
+        },
+        {
+          "type": "fail",
+          "message": "Facebook: login mislukt."
+        }
+      ]
+    },
+    {
+      "type": "navigate",
+      "url": "{{create_url}}"
+    },
+    {
+      "type": "waitForSelector",
+      "selector": "{{sel_file_input}}",
+      "timeout": 20000
+    },
+    {
+      "type": "elementExist",
+      "selector": "{{sel_cookie_accept}}",
+      "var": "cookie_visible_form"
+    },
+    {
+      "type": "ifCondition",
+      "cond": "{{cookie_visible_form}} == true",
+      "then": [
+        {
+          "type": "clickElement",
+          "selector": "{{sel_cookie_accept}}"
+        },
+        {
+          "type": "wait",
+          "min": 500,
+          "max": 900
+        }
+      ]
+    },
+    {
+      "type": "forEach",
+      "list": "{{img_list}}",
+      "itemVar": "img",
+      "steps": [
+        {
+          "type": "waitForSelector",
+          "selector": "{{sel_file_input}}",
+          "timeout": 20000
+        },
+        {
+          "type": "setFiles",
+          "selector": "{{sel_file_input}}",
+          "files": [
+            "{{images_root}}/{{img}}"
+          ]
+        },
+        {
+          "type": "waitForSelector",
+          "selector": "{{sel_photo_thumb}}",
+          "timeout": 30000
+        },
+        {
+          "type": "wait",
+          "min": 800,
+          "max": 1400
+        }
+      ]
+    },
+    {
+      "type": "wait",
+      "min": 2000,
+      "max": 5000
+    },
+    {
+      "type": "inputText",
+      "selector": "{{sel_title}}",
+      "value": "{{title}}",
+      "human": true
+    },
+    {
+      "type": "wait",
+      "min": 2000,
+      "max": 5000
+    },
+    {
+      "type": "inputText",
+      "selector": "{{sel_price}}",
+      "value": "{{price}}",
+      "human": true
+    },
+    {
+      "type": "wait",
+      "min": 2000,
+      "max": 5000
+    },
+    {
+      "type": "clickElement",
+      "selector": "{{sel_category}}"
+    },
+    {
+      "type": "wait",
+      "min": 2000,
+      "max": 5000
+    },
+    {
+      "type": "clickElement",
+      "selector": "{{sel_category_option_first}}"
+    },
+    {
+      "type": "wait",
+      "min": 2000,
+      "max": 5000
+    },
+    {
+      "type": "clickElement",
+      "selector": "{{sel_condition}}"
+    },
+    {
+      "type": "wait",
+      "min": 2000,
+      "max": 5000
+    },
+    {
+      "type": "clickElement",
+      "selector": "{{sel_condition_option}}"
+    },
+    {
+      "type": "wait",
+      "min": 2000,
+      "max": 5000
+    },
+    {
+      "type": "inputText",
+      "selector": "{{sel_description}}",
+      "value": "{{description}}",
+      "human": true
+    },
+    {
+      "type": "wait",
+      "min": 2000,
+      "max": 5000
+    },
+    {
+      "type": "inputText",
+      "selector": "{{sel_location}}",
+      "value": "{{city}}",
+      "human": true
+    },
+    {
+      "type": "wait",
+      "min": 2000,
+      "max": 5000
+    },
+    {
+      "type": "clickElement",
+      "selector": "{{sel_next}}"
+    },
+    {
+      "type": "wait",
+      "min": 2000,
+      "max": 5000
+    },
+    {
+      "type": "elementExist",
+      "selector": "{{sel_groups_modal}}",
+      "var": "groups_modal"
+    },
+    {
+      "type": "ifCondition",
+      "cond": "{{groups_modal}} == true",
+      "then": [
+        {
+          "type": "elementExist",
+          "selector": "{{sel_groups_uncheck_all}}",
+          "var": "uncheck_available"
+        },
+        {
+          "type": "ifCondition",
+          "cond": "{{uncheck_available}} == true",
+          "then": [
+            {
+              "type": "clickElement",
+              "selector": "{{sel_groups_uncheck_all}}"
+            },
+            {
+              "type": "wait",
+              "min": 1200,
+              "max": 2000
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "clickElement",
+      "selector": "{{sel_publish_btn}}"
+    },
+    {
+      "type": "waitRequest",
+      "urlContains": "{{publish_api_hint}}",
+      "timeout": 30000
+    },
+    {
+      "type": "elementExist",
+      "selector": "{{sel_publish_success_banner}}",
+      "var": "pub_ok"
+    },
+    {
+      "type": "ifCondition",
+      "cond": "{{pub_ok}} != true",
+      "then": [
+        {
+          "type": "screenshot",
+          "file": "fb_publish_fail.png"
+        },
+        {
+          "type": "fail",
+          "message": "Facebook: publicatie niet bevestigd."
+        }
+      ],
+      "else": [
+        {
+          "type": "screenshot",
+          "file": "fb_published_ok.png"
+        }
+      ]
+    }
+  ]
+}

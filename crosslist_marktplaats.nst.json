@@ -1,0 +1,354 @@
+{
+  "name": "Crosslist - Marktplaats",
+  "note": "Marktplaats listing automation",
+  "errorCatch": "skip",
+  "tagEndDeal": "keep",
+  "browserEndDeal": "keep",
+  "clearCacheAfterClose": false,
+  "taskTimeout": 0,
+  "taskDelay": 0,
+  "meta": {
+    "name": "Crosslist - Marktplaats",
+    "version": 1
+  },
+  "variables": {
+    "images_root": "/absolute/path/to/images",
+    "allow_bids": false,
+    "username": "{{env.MP_USER}}",
+    "password": "{{env.MP_PASS}}",
+    "login_url": "https://www.marktplaats.nl/account/inloggen",
+    "new_ad_url": "https://www.marktplaats.nl/plaats",
+    "sel_login_email": "input#email",
+    "sel_login_pass": "input#password",
+    "sel_login_submit": "button[type=submit]",
+    "sel_login_ok_indicator": "[data-testid='account-menu']",
+    "sel_cookie_accept": "button#onetrust-accept-btn-handler",
+    "sel_title": "input[name='title']",
+    "sel_category_open": "button[data-testid='category-picker']",
+    "sel_category_search": "input[aria-label='Zoek categorie']",
+    "sel_category_pick_first": "[data-testid='category-option']:first-child",
+    "sel_file_input": "input[type='file']",
+    "sel_photo_thumb": "[data-testid='photo-thumb']",
+    "sel_description": "textarea[name='description']",
+    "sel_price": "input[name='price']",
+    "sel_bids_toggle": "[data-testid='allow-bids']",
+    "sel_postcode": "input[name='postalcode']",
+    "sel_delivery_pickup": "input[name='pickup']",
+    "sel_free_ad": "[data-testid='ad-option-free']",
+    "sel_publish_btn": "button[data-testid='place-ad']",
+    "sel_publish_success_banner": "[data-testid='publish-confirmation']",
+    "sel_payment_prompt": "[data-testid='payment-step']",
+    "publish_api_hint": "/placead"
+  },
+  "tableData": {
+    "enabled": true,
+    "source": "csv",
+    "path": "/absolute/path/to/ads.csv",
+    "hasHeader": true
+  },
+  "nodes": [
+    {
+      "type": "setVar",
+      "var": "img_list",
+      "valueFrom": {
+        "split": {
+          "source": "{{images}}",
+          "sep": ";"
+        }
+      }
+    },
+    {
+      "type": "setVar",
+      "var": "img_list",
+      "valueFrom": {
+        "slice": {
+          "source": "{{img_list}}",
+          "start": 0,
+          "end": 24
+        }
+      }
+    },
+    {
+      "type": "setVar",
+      "var": "img_main",
+      "valueFrom": {
+        "index": {
+          "source": "{{img_list}}",
+          "at": 0
+        }
+      }
+    },
+    {
+      "type": "setVar",
+      "var": "postcode_valid",
+      "valueFrom": {
+        "regexMatch": {
+          "pattern": "^[1-9][0-9]{3}[A-Z]{2}$",
+          "value": "{{postcode}}"
+        }
+      }
+    },
+    {
+      "type": "ifCondition",
+      "cond": "{{postcode_valid}} != true",
+      "then": [
+        {
+          "type": "fail",
+          "message": "Marktplaats: ongeldig postcodeformaat (verwacht 1234AB)."
+        }
+      ]
+    },
+    {
+      "type": "navigate",
+      "url": "{{login_url}}"
+    },
+    {
+      "type": "waitForSelector",
+      "selector": "{{sel_login_email}}",
+      "timeout": 20000
+    },
+    {
+      "type": "elementExist",
+      "selector": "{{sel_cookie_accept}}",
+      "var": "cookie_visible"
+    },
+    {
+      "type": "ifCondition",
+      "cond": "{{cookie_visible}} == true",
+      "then": [
+        {
+          "type": "clickElement",
+          "selector": "{{sel_cookie_accept}}"
+        },
+        {
+          "type": "wait",
+          "min": 500,
+          "max": 900
+        }
+      ]
+    },
+    {
+      "type": "inputText",
+      "selector": "{{sel_login_email}}",
+      "value": "{{username}}",
+      "human": true
+    },
+    {
+      "type": "inputText",
+      "selector": "{{sel_login_pass}}",
+      "value": "{{password}}",
+      "mask": true,
+      "human": true
+    },
+    {
+      "type": "clickElement",
+      "selector": "{{sel_login_submit}}"
+    },
+    {
+      "type": "wait",
+      "min": 1200,
+      "max": 2200
+    },
+    {
+      "type": "elementExist",
+      "selector": "{{sel_login_ok_indicator}}",
+      "var": "logged_in"
+    },
+    {
+      "type": "ifCondition",
+      "cond": "{{logged_in}} != true",
+      "then": [
+        {
+          "type": "screenshot",
+          "file": "mp_login_failed.png"
+        },
+        {
+          "type": "fail",
+          "message": "Marktplaats: login mislukt"
+        }
+      ]
+    },
+    {
+      "type": "navigate",
+      "url": "{{new_ad_url}}"
+    },
+    {
+      "type": "waitForSelector",
+      "selector": "{{sel_title}}",
+      "timeout": 20000
+    },
+    {
+      "type": "elementExist",
+      "selector": "{{sel_cookie_accept}}",
+      "var": "cookie_visible_form"
+    },
+    {
+      "type": "ifCondition",
+      "cond": "{{cookie_visible_form}} == true",
+      "then": [
+        {
+          "type": "clickElement",
+          "selector": "{{sel_cookie_accept}}"
+        },
+        {
+          "type": "wait",
+          "min": 500,
+          "max": 900
+        }
+      ]
+    },
+    {
+      "type": "inputText",
+      "selector": "{{sel_title}}",
+      "value": "{{title}}",
+      "human": true
+    },
+    {
+      "type": "clickElement",
+      "selector": "{{sel_category_open}}"
+    },
+    {
+      "type": "inputText",
+      "selector": "{{sel_category_search}}",
+      "value": "{{category_hint}}",
+      "human": true
+    },
+    {
+      "type": "wait",
+      "min": 600,
+      "max": 900
+    },
+    {
+      "type": "clickElement",
+      "selector": "{{sel_category_pick_first}}"
+    },
+    {
+      "type": "forEach",
+      "list": "{{img_list}}",
+      "itemVar": "img",
+      "steps": [
+        {
+          "type": "waitForSelector",
+          "selector": "{{sel_file_input}}",
+          "timeout": 20000
+        },
+        {
+          "type": "setFiles",
+          "selector": "{{sel_file_input}}",
+          "files": [
+            "{{images_root}}/{{img}}"
+          ]
+        },
+        {
+          "type": "waitForSelector",
+          "selector": "{{sel_photo_thumb}}",
+          "timeout": 30000
+        },
+        {
+          "type": "wait",
+          "min": 700,
+          "max": 1200
+        }
+      ]
+    },
+    {
+      "type": "inputText",
+      "selector": "{{sel_description}}",
+      "value": "{{description}}",
+      "human": true
+    },
+    {
+      "type": "inputText",
+      "selector": "{{sel_price}}",
+      "value": "{{price}}",
+      "human": true
+    },
+    {
+      "type": "ifCondition",
+      "cond": "{{allow_bids}} == false",
+      "then": [
+        {
+          "type": "clickElement",
+          "selector": "{{sel_bids_toggle}}"
+        },
+        {
+          "type": "wait",
+          "min": 400,
+          "max": 700
+        }
+      ]
+    },
+    {
+      "type": "inputText",
+      "selector": "{{sel_postcode}}",
+      "value": "{{postcode}}",
+      "human": true
+    },
+    {
+      "type": "clickElement",
+      "selector": "{{sel_delivery_pickup}}"
+    },
+    {
+      "type": "wait",
+      "min": 400,
+      "max": 700
+    },
+    {
+      "type": "clickElement",
+      "selector": "{{sel_free_ad}}"
+    },
+    {
+      "type": "elementExist",
+      "selector": "{{sel_payment_prompt}}",
+      "var": "payment_required"
+    },
+    {
+      "type": "ifCondition",
+      "cond": "{{payment_required}} == true",
+      "then": [
+        {
+          "type": "screenshot",
+          "file": "mp_payment_prompt.png"
+        },
+        {
+          "type": "fail",
+          "message": "Marktplaats vereist betaalde plaatsing."
+        }
+      ]
+    },
+    {
+      "type": "clickElement",
+      "selector": "{{sel_publish_btn}}"
+    },
+    {
+      "type": "waitRequest",
+      "urlContains": "{{publish_api_hint}}",
+      "timeout": 30000
+    },
+    {
+      "type": "elementExist",
+      "selector": "{{sel_publish_success_banner}}",
+      "var": "pub_ok"
+    },
+    {
+      "type": "ifCondition",
+      "cond": "{{pub_ok}} != true",
+      "then": [
+        {
+          "type": "screenshot",
+          "file": "mp_publish_fail.png"
+        },
+        {
+          "type": "fail",
+          "message": "Marktplaats: publicatie niet bevestigd."
+        }
+      ],
+      "else": [
+        {
+          "type": "screenshot",
+          "file": "mp_published_ok.png"
+        }
+      ]
+    }
+  ]
+}
